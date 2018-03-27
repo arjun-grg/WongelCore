@@ -5,6 +5,7 @@ import android.opengl.GLES20
 import android.opengl.GLSurfaceView
 import android.support.v7.app.AppCompatActivity
 import android.util.Log
+import android.view.GestureDetector
 import android.view.MotionEvent
 import android.view.ScaleGestureDetector
 import android.view.View
@@ -23,6 +24,7 @@ import com.wongel.wongelcore.ar.rendering.PlaneRenderer
 import com.wongel.wongelcore.ar.rendering.PointCloudRenderer
 import com.wongel.wongelcore.ar.util.CameraPermissionHelper
 import com.wongel.wongelcore.ar.util.DisplayRotationHelper
+import java.io.IOException
 import javax.microedition.khronos.egl.EGLConfig
 import javax.microedition.khronos.opengles.GL10
 
@@ -35,8 +37,6 @@ abstract class Renderer(val context: Context) : GLSurfaceView.Renderer, WongelRe
     private val list: MutableList<Wongel>
 
     private lateinit var delegate: ArDelegate
-    private var scaleGesture: ScaleGesture? = null
-    private var scaleGestureDetector: ScaleGestureDetector? = null
     private val backgroundRenderer = BackgroundRenderer()
     private var planeRenderer: PlaneRenderer? = null
     private val pointCloud = PointCloudRenderer()
@@ -44,6 +44,14 @@ abstract class Renderer(val context: Context) : GLSurfaceView.Renderer, WongelRe
     private var displayRotationHelper: DisplayRotationHelper? = null
     private var session: Session? = null
     var errorListener: OnListner<String>? = null
+
+    var enablePlane: Boolean = false
+
+    private var scaleGesture: ScaleGesture? = null
+    private var scaleGestureDetector: ScaleGestureDetector? = null
+    private var gestureDetector: GestureDetector? = null
+
+    private var tapObject: ObjectRenderer? = null
 
     init {
         list = mutableListOf()
@@ -81,7 +89,12 @@ abstract class Renderer(val context: Context) : GLSurfaceView.Renderer, WongelRe
             message = "This device does not support AR"
         }
 
-        showMessage(message)
+        if (message != null)
+            showMessage(message)
+        else {
+            session?.resume()
+            displayRotationHelper?.onResume()
+        }
     }
 
     override fun onPause() {
@@ -91,8 +104,12 @@ abstract class Renderer(val context: Context) : GLSurfaceView.Renderer, WongelRe
         }
     }
 
-    override fun addPlane(plane: PlaneRenderer) {
+    override fun addPlane(plane: PlaneRenderer?) {
         this.planeRenderer = plane
+    }
+
+    fun setTapObject(obj: ObjectRenderer) {
+        this.tapObject = obj
     }
 
     override fun onDrawFrame(p0: GL10?) {
@@ -132,14 +149,42 @@ abstract class Renderer(val context: Context) : GLSurfaceView.Renderer, WongelRe
         backgroundRenderer.createOnGlThread(context)
         pointCloud.createOnGlThread(context)
 
+        if (enablePlane) {
+            renderPlane()
+        } else
+            addPlane(null)
+
         initScene()
     }
 
-    override fun onTouch(p0: View?, event: MotionEvent?) =
+    override fun onTouch(p0: View?, event: MotionEvent?): Boolean {
+        if (gestureDetector != null)
+            gestureDetector!!.onTouchEvent(event)
+        if (scaleGestureDetector != null)
             scaleGestureDetector!!.onTouchEvent(event)
 
-    override fun enableTouch(view: View?) {
+        return (gestureDetector != null || scaleGestureDetector != null)
+    }
+
+
+    private fun enableTouch(view: View?) {
         view?.setOnTouchListener(this)
+    }
+
+    override fun enableTap(view: View?) {
+        gestureDetector = GestureDetector(
+                context,
+                object : GestureDetector.SimpleOnGestureListener() {
+                    override fun onSingleTapUp(e: MotionEvent): Boolean {
+                        addTapChild(e)
+                        return true
+                    }
+
+                    override fun onDown(e: MotionEvent): Boolean {
+                        return true
+                    }
+                })
+        enableTouch(view)
     }
 
     override fun enableScale(view: View?) {
@@ -152,6 +197,13 @@ abstract class Renderer(val context: Context) : GLSurfaceView.Renderer, WongelRe
         enableTouch(view)
         scaleGesture = ScaleGesture(scaleFactor)
         scaleGestureDetector = ScaleGestureDetector(context, scaleGesture)
+    }
+
+    override fun addTapChild(tap: MotionEvent) {
+        if (tapObject != null)
+            list.add(Wongel(tapObject, tap))
+        else
+            showMessage("Tap Object not set")
     }
 
     override fun addChild(child: Any) {
@@ -179,7 +231,8 @@ abstract class Renderer(val context: Context) : GLSurfaceView.Renderer, WongelRe
 
         pointCloud.release()
 
-        planeRenderer?.drawPlanes(session?.getAllTrackables(Plane::class.java), camera.displayOrientedPose, projmtx)
+        if (enablePlane)
+            planeRenderer?.drawPlanes(session?.getAllTrackables(Plane::class.java), camera.displayOrientedPose, projmtx)
 
         for (obj in list) {
             if (obj is Wongel) {
@@ -237,8 +290,6 @@ abstract class Renderer(val context: Context) : GLSurfaceView.Renderer, WongelRe
 
                 initSession()
             }
-
-            resume()
         }
 
         private fun hasCameraPermission(): Boolean = if (!CameraPermissionHelper.hasCameraPermission(context as AppCompatActivity)) {
@@ -256,16 +307,6 @@ abstract class Renderer(val context: Context) : GLSurfaceView.Renderer, WongelRe
             }
 
             return true
-        }
-
-        private fun resume() {
-            session!!.resume()
-
-            try {
-                displayRotationHelper!!.onResume()
-            } catch (e: NoSuchMethodError) {
-                Log.d("ar", e.message)
-            }
         }
 
         fun initSession() {
@@ -288,6 +329,15 @@ abstract class Renderer(val context: Context) : GLSurfaceView.Renderer, WongelRe
                 CameraPermissionHelper.launchPermissionSettings(context)
             }
             context.finish()
+        }
+    }
+
+    private fun renderPlane() {
+        try {
+            val plane = PlaneRenderer().createOnGlThread(context, "trigrid.png")
+            addPlane(plane)
+        } catch (e: IOException) {
+            showMessage("Failed to read plane texture")
         }
     }
 }
