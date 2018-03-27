@@ -19,6 +19,7 @@ import com.wongel.wongelcore.ar.listner.ScaleGesture
 import com.wongel.wongelcore.ar.model.Wongel
 import com.wongel.wongelcore.ar.rendering.BackgroundRenderer
 import com.wongel.wongelcore.ar.rendering.ObjectRenderer
+import com.wongel.wongelcore.ar.rendering.PlaneRenderer
 import com.wongel.wongelcore.ar.rendering.PointCloudRenderer
 import com.wongel.wongelcore.ar.util.CameraPermissionHelper
 import com.wongel.wongelcore.ar.util.DisplayRotationHelper
@@ -37,6 +38,7 @@ abstract class Renderer(val context: Context) : GLSurfaceView.Renderer, WongelRe
     private var scaleGesture: ScaleGesture? = null
     private var scaleGestureDetector: ScaleGestureDetector? = null
     private val backgroundRenderer = BackgroundRenderer()
+    private var planeRenderer: PlaneRenderer? = null
     private val pointCloud = PointCloudRenderer()
 
     private var displayRotationHelper: DisplayRotationHelper? = null
@@ -87,6 +89,10 @@ abstract class Renderer(val context: Context) : GLSurfaceView.Renderer, WongelRe
             displayRotationHelper!!.onPause()
             session!!.pause()
         }
+    }
+
+    override fun addPlane(plane: PlaneRenderer) {
+        this.planeRenderer = plane
     }
 
     override fun onDrawFrame(p0: GL10?) {
@@ -173,10 +179,17 @@ abstract class Renderer(val context: Context) : GLSurfaceView.Renderer, WongelRe
 
         pointCloud.release()
 
+        planeRenderer?.drawPlanes(session?.getAllTrackables(Plane::class.java), camera.displayOrientedPose, projmtx)
+
         for (obj in list) {
             if (obj is Wongel) {
-                if (obj.anchor == null)
-                    obj.anchor = getAnchor(frame, obj.position!!)
+                if (obj.anchor == null) {
+                    if (obj.position != null)
+                        obj.anchor = getAnchor(frame, obj.position!!)
+                    else
+                        obj.anchor = getAnchor(frame, obj.tap!!)
+                }
+
                 anchorObject(obj, frame, viewmtx, projmtx)
             }
         }
@@ -198,6 +211,21 @@ abstract class Renderer(val context: Context) : GLSurfaceView.Renderer, WongelRe
             frame.camera.pose
                     .compose(Pose.makeTranslation(position.x, position.y, position.z))
                     .extractTranslation())
+
+    private fun getAnchor(frame: Frame, tap: MotionEvent): Anchor? {
+        if (tap != null && frame.camera.getTrackingState() == TrackingState.TRACKING) {
+            for (hit in frame.hitTest(tap)) {
+                val trackable = hit.getTrackable()
+
+                if (trackable is Plane && (trackable as Plane).isPoseInPolygon(hit.getHitPose()) || trackable is Point && (trackable as Point).orientationMode == Point.OrientationMode.ESTIMATED_SURFACE_NORMAL) {
+                    return hit.createAnchor()
+                    break
+                }
+            }
+        }
+
+        return null
+    }
 
     inner class ArDelegate {
         private var installRequested: Boolean = false

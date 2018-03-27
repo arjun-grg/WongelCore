@@ -109,7 +109,7 @@ public class ObjectRenderer {
    * @param objAssetName Name of the OBJ file containing the model geometry.
    * @param diffuseTextureAssetName Name of the PNG file containing the diffuse texture map.
    */
-  public void createOnGlThread(Context context, String objAssetName, String diffuseTextureAssetName)
+  public ObjectRenderer createOnGlThread(Context context, String objAssetName, String diffuseTextureAssetName)
       throws IOException {
     // Read the texture.
     Bitmap textureBitmap =
@@ -219,6 +219,7 @@ public class ObjectRenderer {
     ShaderUtil.checkGLError(TAG, "Program parameters");
 
     Matrix.setIdentityM(modelMatrix, 0);
+    return this;
   }
 
   /**

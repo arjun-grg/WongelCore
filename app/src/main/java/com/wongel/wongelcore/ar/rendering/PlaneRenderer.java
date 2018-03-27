@@ -117,7 +117,7 @@ public class PlaneRenderer {
    * @param context Needed to access shader source and texture PNG.
    * @param gridDistanceTextureName Name of the PNG file containing the grid texture.
    */
-  public void createOnGlThread(Context context, String gridDistanceTextureName) throws IOException {
+  public PlaneRenderer createOnGlThread(Context context, String gridDistanceTextureName) throws IOException {
     int vertexShader =
         ShaderUtil.loadGLShader(TAG, context, GLES20.GL_VERTEX_SHADER, R.raw.plane_vertex);
     int passthroughShader =
@@ -160,6 +160,7 @@ public class PlaneRenderer {
     planeUvMatrixUniform = GLES20.glGetUniformLocation(planeProgram, "u_PlaneUvMatrix");
 
     ShaderUtil.checkGLError(TAG, "Program parameters");
+    return this;
   }
 
   /** Updates the plane model transform matrix and extents. */

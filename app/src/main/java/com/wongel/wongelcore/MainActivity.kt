@@ -8,6 +8,7 @@ import android.util.Log
 import com.wongel.wongelcore.ar.listner.OnListner
 import com.wongel.wongelcore.ar.renderer.Renderer
 import com.wongel.wongelcore.ar.rendering.ObjectRenderer
+import com.wongel.wongelcore.ar.rendering.PlaneRenderer
 import kotlinx.android.synthetic.main.activity_main.*
 import java.io.IOException
 
@@ -50,7 +51,7 @@ class MainActivity : AppCompatActivity(), OnListner<String> {
 
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
-        myRenderer?.onRequestPermissionsResult(requestCode,permissions,grantResults)
+        myRenderer?.onRequestPermissionsResult(requestCode, permissions, grantResults)
     }
 
     class MyRenderer(c: Context) : Renderer(c) {
@@ -59,12 +60,10 @@ class MainActivity : AppCompatActivity(), OnListner<String> {
 
         override fun initScene() {
             try {
-                val obj = ObjectRenderer()
-                obj.createOnGlThread(context, resourceName, textureName)
+                val obj = ObjectRenderer().createOnGlThread(context, resourceName, textureName)
                 obj.setMaterialProperties(0.0f, 3.5f, 1.0f, 6.0f)
 
                 addChild(obj, 0f, 0f, -1.75f)
-
 
                 val obj1 = ObjectRenderer()
                 obj1.createOnGlThread(context, resourceName, textureName)
@@ -73,6 +72,13 @@ class MainActivity : AppCompatActivity(), OnListner<String> {
                 addChild(obj1, -1f, 0f, -1.75f)
             } catch (e: IOException) {
                 Log.e("Ar", "Failed to read obj file")
+            }
+
+            try {
+                val plane = PlaneRenderer().createOnGlThread(/*context=*/context, "trigrid.png")
+                addPlane(plane)
+            } catch (e: IOException) {
+                Log.e("Ar", "Failed to read plane texture")
             }
         }
     }
