@@ -1,6 +1,7 @@
 package com.wongel.wongelcore.ar.util
 
 import android.location.Location
+import android.util.Log
 import android.view.MotionEvent
 import com.google.ar.core.*
 import com.wongel.wongelcore.ar.model.Wongel
@@ -15,10 +16,10 @@ object AnchorUtil {
                     .extractTranslation())
 
     fun getAnchor(session: Session?, frame: Frame, userLocation: Location, obj: Wongel): Anchor? {
-        val distance: FloatArray = floatArrayOf()
-        Location.distanceBetween(userLocation.latitude, userLocation.latitude, obj.location!!.latitude, obj.location!!.longitude, distance)
+        val results = FloatArray(5)
+        Location.distanceBetween(userLocation.latitude, userLocation.longitude, obj.location!!.latitude, obj.location!!.longitude, results)
 
-        obj.position = Wongel.WPosition(0f, 0f, distance[0])
+        obj.position = Wongel.WPosition(0f, 0f, -results[0])
         return getAnchor(session, frame, obj.position!!)
     }
 

@@ -30,6 +30,7 @@ class Wongel {
     }
 
     constructor(obj: Any?, location: Location?) {
+        this.obj = obj
         this.location = location
     }
 

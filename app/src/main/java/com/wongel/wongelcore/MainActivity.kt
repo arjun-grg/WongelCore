@@ -1,6 +1,7 @@
 package com.wongel.wongelcore
 
 import android.content.Context
+import android.location.Location
 import android.opengl.GLSurfaceView
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
@@ -31,9 +32,15 @@ class MainActivity : AppCompatActivity(), OnListner<String> {
 
     fun initSurfaceView() {
         myRenderer?.enableScale(surfaceView, 0.25f)
-        myRenderer?.enableTap(surfaceView)
+//        myRenderer?.enableTap(surfaceView)
         myRenderer?.errorListener = this
-        myRenderer?.enablePlane = true
+//        myRenderer?.enablePlane = true
+
+        val location=Location("dummy")
+        location.latitude=27.685055
+        location.longitude=85.320089
+
+        myRenderer?.userLocation=location
 
         surfaceView.preserveEGLContextOnPause = true
         surfaceView.setEGLContextClientVersion(2)
@@ -84,17 +91,17 @@ class MainActivity : AppCompatActivity(), OnListner<String> {
                 val obj = ObjectRenderer().createOnGlThread(context, resourceName, textureName)
                 obj.setMaterialProperties(0.0f, 3.5f, 1.0f, 6.0f)
 
-                addChild(obj, 0f, 0f, -1.75f)
-
-                val obj1 = ObjectRenderer()
-                obj1.createOnGlThread(context, resourceName, textureName)
-                obj1.setMaterialProperties(0.0f, 3.5f, 1.0f, 6.0f)
-
-                addChild(obj1, -1f, 0f, -1.75f)
-
-                val tabObj = ObjectRenderer().createOnGlThread(context, resourceName, textureName)
-
-                setTapObject(tabObj)
+                addChild(obj,27.685015,85.320089)
+//                addChild(obj, 0f, 0f, -1.75f)
+//
+//                val obj1 = ObjectRenderer()
+//                obj1.createOnGlThread(context, resourceName, textureName)
+//                obj1.setMaterialProperties(0.0f, 3.5f, 1.0f, 6.0f)
+//
+//                addChild(obj1, -1f, 0f, -1.75f)
+//
+//                val tabObj = ObjectRenderer().createOnGlThread(context, resourceName, textureName)
+//                setTapObject(tabObj)
             } catch (e: IOException) {
                 Log.e("Ar", "Failed to read obj file")
             }

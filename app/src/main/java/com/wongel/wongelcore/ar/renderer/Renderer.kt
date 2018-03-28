@@ -269,7 +269,10 @@ abstract class Renderer(val context: Context) : GLSurfaceView.Renderer, WongelRe
 
         if (wongel.obj is ObjectRenderer) {
             val obj = (wongel.obj as ObjectRenderer)
-            obj?.updateModelMatrix(wongel.anchorMatrix, scaleGesture?.scaleFactor!!)
+            if (scaleGesture != null)
+                obj?.updateModelMatrix(wongel.anchorMatrix, scaleGesture?.scaleFactor!!)
+            else
+                obj?.updateModelMatrix(wongel.anchorMatrix, 1f)
             obj?.draw(viewmtx, projmtx, lightIntensity)
         }
     }
