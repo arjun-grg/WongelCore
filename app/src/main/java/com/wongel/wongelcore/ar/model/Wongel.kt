@@ -1,5 +1,6 @@
 package com.wongel.wongelcore.ar.model
 
+import android.location.Location
 import android.view.MotionEvent
 import com.google.ar.core.Anchor
 
@@ -12,6 +13,7 @@ class Wongel {
     var obj: Any? = null
     var position: WPosition? = null
     var tap: MotionEvent? = null
+    var location:Location?=null
 
     constructor(object3D: Any?) {
         this.obj = object3D
@@ -25,6 +27,10 @@ class Wongel {
     constructor(obj: Any?, tap: MotionEvent?) {
         this.obj = obj
         this.tap = tap
+    }
+
+    constructor(obj: Any?, location: Location?) {
+        this.location = location
     }
 
     data class WPosition(val x: Float, val y: Float, val z: Float)

@@ -1,6 +1,7 @@
 package com.wongel.wongelcore.ar.renderer
 
 import android.content.Context
+import android.location.Location
 import android.opengl.GLES20
 import android.opengl.GLSurfaceView
 import android.support.v7.app.AppCompatActivity
@@ -22,6 +23,7 @@ import com.wongel.wongelcore.ar.rendering.BackgroundRenderer
 import com.wongel.wongelcore.ar.rendering.ObjectRenderer
 import com.wongel.wongelcore.ar.rendering.PlaneRenderer
 import com.wongel.wongelcore.ar.rendering.PointCloudRenderer
+import com.wongel.wongelcore.ar.util.AnchorUtil
 import com.wongel.wongelcore.ar.util.CameraPermissionHelper
 import com.wongel.wongelcore.ar.util.DisplayRotationHelper
 import java.io.IOException
@@ -52,6 +54,7 @@ abstract class Renderer(val context: Context) : GLSurfaceView.Renderer, WongelRe
     private var gestureDetector: GestureDetector? = null
 
     private var tapObject: ObjectRenderer? = null
+    var userLocation: Location? = null
 
     init {
         list = mutableListOf()
@@ -215,7 +218,10 @@ abstract class Renderer(val context: Context) : GLSurfaceView.Renderer, WongelRe
     }
 
     override fun addChild(child: Any, latitude: Double, longitude: Double) {
-
+        val location = Location("dummy")
+        location.latitude = latitude
+        location.longitude = longitude
+        list.add(Wongel(child, location))
     }
 
     private fun drawObjects(camera: Camera, frame: Frame) {
@@ -237,10 +243,18 @@ abstract class Renderer(val context: Context) : GLSurfaceView.Renderer, WongelRe
         for (obj in list) {
             if (obj is Wongel) {
                 if (obj.anchor == null) {
-                    if (obj.position != null)
-                        obj.anchor = getAnchor(frame, obj.position!!)
-                    else
-                        obj.anchor = getAnchor(frame, obj.tap!!)
+                    if (obj.tap != null)
+                        obj.anchor = AnchorUtil.getAnchor(frame, obj.tap!!)
+                    else {
+                        if (obj.position != null)
+                            obj.anchor = AnchorUtil.getAnchor(session, frame, obj.position!!)
+                        else {
+                            if (userLocation == null)
+                                showMessage("Set users current location")
+                            else
+                                obj.anchor = AnchorUtil.getAnchor(session, frame, userLocation!!, obj.location!!)
+                        }
+                    }
                 }
 
                 anchorObject(obj, frame, viewmtx, projmtx)
@@ -258,26 +272,6 @@ abstract class Renderer(val context: Context) : GLSurfaceView.Renderer, WongelRe
             obj?.updateModelMatrix(wongel.anchorMatrix, scaleGesture?.scaleFactor!!)
             obj?.draw(viewmtx, projmtx, lightIntensity)
         }
-    }
-
-    private fun getAnchor(frame: Frame, position: Wongel.WPosition) = session?.createAnchor(
-            frame.camera.pose
-                    .compose(Pose.makeTranslation(position.x, position.y, position.z))
-                    .extractTranslation())
-
-    private fun getAnchor(frame: Frame, tap: MotionEvent): Anchor? {
-        if (tap != null && frame.camera.getTrackingState() == TrackingState.TRACKING) {
-            for (hit in frame.hitTest(tap)) {
-                val trackable = hit.getTrackable()
-
-                if (trackable is Plane && (trackable as Plane).isPoseInPolygon(hit.getHitPose()) || trackable is Point && (trackable as Point).orientationMode == Point.OrientationMode.ESTIMATED_SURFACE_NORMAL) {
-                    return hit.createAnchor()
-                    break
-                }
-            }
-        }
-
-        return null
     }
 
     inner class ArDelegate {
