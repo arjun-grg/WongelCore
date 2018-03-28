@@ -252,7 +252,7 @@ abstract class Renderer(val context: Context) : GLSurfaceView.Renderer, WongelRe
                             if (userLocation == null)
                                 showMessage("Set users current location")
                             else
-                                obj.anchor = AnchorUtil.getAnchor(session, frame, userLocation!!, obj.location!!)
+                                obj.anchor = AnchorUtil.getAnchor(session, frame, userLocation!!, obj)
                         }
                     }
                 }

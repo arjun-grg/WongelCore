@@ -14,12 +14,12 @@ object AnchorUtil {
                     .compose(Pose.makeTranslation(position.x, position.y, position.z))
                     .extractTranslation())
 
-    fun getAnchor(session: Session?, frame: Frame, userLocation: Location, objLocation: Location): Anchor? {
+    fun getAnchor(session: Session?, frame: Frame, userLocation: Location, obj: Wongel): Anchor? {
         val distance: FloatArray = floatArrayOf()
-        Location.distanceBetween(userLocation.latitude, userLocation.latitude, objLocation.latitude, objLocation.longitude, distance)
+        Location.distanceBetween(userLocation.latitude, userLocation.latitude, obj.location!!.latitude, obj.location!!.longitude, distance)
 
-        val pos = Wongel.WPosition(0f, 0f, distance[0])
-        return getAnchor(session, frame, pos)
+        obj.position = Wongel.WPosition(0f, 0f, distance[0])
+        return getAnchor(session, frame, obj.position!!)
     }
 
     fun getAnchor(frame: Frame, tap: MotionEvent): Anchor? {
