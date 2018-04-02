@@ -21,7 +21,7 @@ import android.opengl.GLES20;
 import android.opengl.GLUtils;
 import android.opengl.Matrix;
 
-import com.wongel.wongelcore.R;
+import com.wongel.libwongelcore.R;
 
 import java.io.IOException;
 import java.io.InputStream;

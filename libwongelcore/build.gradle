@@ -19,7 +19,6 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
-
 }
 
 dependencies {
@@ -29,3 +28,16 @@ dependencies {
     implementation otherDependencies.ar
     implementation otherDependencies.gl
 }
+
+task deleteJar(type: Delete) {
+    delete 'libs/wongelCore.jar'
+}
+
+task createJar(type: Copy) {
+    from('build/intermediates/bundles/release/')
+    into('libs/jars/')
+    include('classes.jar')
+    rename('classes.jar', 'wongelCore.jar')
+}
+
+createJar.dependsOn(deleteJar, build)

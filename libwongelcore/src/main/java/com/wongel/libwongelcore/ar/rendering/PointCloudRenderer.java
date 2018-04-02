@@ -19,7 +19,7 @@ import android.opengl.GLES20;
 import android.opengl.GLSurfaceView;
 import android.opengl.Matrix;
 
-import com.wongel.wongelcore.R;
+import com.wongel.libwongelcore.R;
 import com.google.ar.core.PointCloud;
 
 import javax.microedition.khronos.egl.EGLConfig;
