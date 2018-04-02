@@ -6,7 +6,7 @@ import android.location.Location
  * Created by tseringwongelgurung on 3/28/18.
  */
 object DistanceUtils {
-    private fun angleFromCoordinate(l1: Location, l2: Location): Float {
+    fun angleFromCoordinate(l1: Location, l2: Location): Float {
         val dLon = l2.longitude - l1.longitude
 
         val y = Math.sin(dLon) * Math.cos(l2.latitude)

@@ -54,7 +54,9 @@ abstract class Renderer(val context: Context) : GLSurfaceView.Renderer, WongelRe
     private var gestureDetector: GestureDetector? = null
 
     private var tapObject: ObjectRenderer? = null
-    var userLocation: Location? = null
+    var locationConfig: LocationConfig? = null
+
+    data class LocationConfig(val location: Location, val angle: Float)
 
     init {
         list = mutableListOf()
@@ -249,10 +251,10 @@ abstract class Renderer(val context: Context) : GLSurfaceView.Renderer, WongelRe
                         if (obj.position != null)
                             obj.anchor = AnchorUtil.getAnchor(session, frame, obj.position!!)
                         else {
-                            if (userLocation == null)
+                            if (locationConfig == null)
                                 showMessage("Set users current location")
                             else
-                                obj.anchor = AnchorUtil.getAnchor(session, frame, userLocation!!, obj)
+                                obj.anchor = AnchorUtil.getAnchor(session, frame, locationConfig!!, obj)
                         }
                     }
                 }
