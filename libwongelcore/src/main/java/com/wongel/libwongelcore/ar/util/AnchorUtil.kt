@@ -1,11 +1,11 @@
-package com.wongel.wongelcore.ar.util
+package com.wongel.libwongelcore.ar.util
 
 import android.location.Location
 import android.util.Log
 import android.view.MotionEvent
 import com.google.ar.core.*
-import com.wongel.wongelcore.ar.model.Wongel
-import com.wongel.wongelcore.ar.renderer.Renderer
+import com.wongel.libwongelcore.ar.model.Wongel
+import com.wongel.libwongelcore.ar.renderer.Renderer
 
 /**
  * Created by tseringwongelgurung on 3/28/18.

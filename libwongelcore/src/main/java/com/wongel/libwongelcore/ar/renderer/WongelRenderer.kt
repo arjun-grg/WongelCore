@@ -1,9 +1,8 @@
-package com.wongel.wongelcore.ar.renderer
+package com.wongel.libwongelcore.ar.renderer
 
 import android.view.MotionEvent
 import android.view.View
-import com.wongel.wongelcore.ar.rendering.ObjectRenderer
-import com.wongel.wongelcore.ar.rendering.PlaneRenderer
+import com.wongel.libwongelcore.ar.rendering.PlaneRenderer
 
 /**
  * Created by tseringwongelgurung on 3/27/18.

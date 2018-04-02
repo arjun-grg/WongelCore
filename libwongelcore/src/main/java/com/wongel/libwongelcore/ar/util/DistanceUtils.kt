@@ -1,4 +1,4 @@
-package com.wongel.wongelcore.ar.util
+package com.wongel.libwongelcore.ar.util
 
 import android.location.Location
 

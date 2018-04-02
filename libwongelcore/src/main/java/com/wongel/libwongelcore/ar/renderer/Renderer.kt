@@ -1,4 +1,4 @@
-package com.wongel.wongelcore.ar.renderer
+package com.wongel.libwongelcore.ar.renderer
 
 import android.content.Context
 import android.location.Location
@@ -16,16 +16,16 @@ import com.google.ar.core.exceptions.UnavailableApkTooOldException
 import com.google.ar.core.exceptions.UnavailableArcoreNotInstalledException
 import com.google.ar.core.exceptions.UnavailableSdkTooOldException
 import com.google.ar.core.exceptions.UnavailableUserDeclinedInstallationException
-import com.wongel.wongelcore.ar.listner.OnListner
-import com.wongel.wongelcore.ar.listner.ScaleGesture
-import com.wongel.wongelcore.ar.model.Wongel
-import com.wongel.wongelcore.ar.rendering.BackgroundRenderer
-import com.wongel.wongelcore.ar.rendering.ObjectRenderer
-import com.wongel.wongelcore.ar.rendering.PlaneRenderer
-import com.wongel.wongelcore.ar.rendering.PointCloudRenderer
-import com.wongel.wongelcore.ar.util.AnchorUtil
-import com.wongel.wongelcore.ar.util.CameraPermissionHelper
-import com.wongel.wongelcore.ar.util.DisplayRotationHelper
+import com.wongel.libwongelcore.ar.listner.OnListner
+import com.wongel.libwongelcore.ar.listner.ScaleGesture
+import com.wongel.libwongelcore.ar.model.Wongel
+import com.wongel.libwongelcore.ar.rendering.BackgroundRenderer
+import com.wongel.libwongelcore.ar.rendering.ObjectRenderer
+import com.wongel.libwongelcore.ar.rendering.PlaneRenderer
+import com.wongel.libwongelcore.ar.rendering.PointCloudRenderer
+import com.wongel.libwongelcore.ar.util.AnchorUtil
+import com.wongel.libwongelcore.ar.util.CameraPermissionHelper
+import com.wongel.libwongelcore.ar.util.DisplayRotationHelper
 import java.io.IOException
 import javax.microedition.khronos.egl.EGLConfig
 import javax.microedition.khronos.opengles.GL10

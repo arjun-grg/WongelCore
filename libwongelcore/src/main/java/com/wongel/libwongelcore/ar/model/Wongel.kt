@@ -1,4 +1,4 @@
-package com.wongel.wongelcore.ar.model
+package com.wongel.libwongelcore.ar.model
 
 import android.location.Location
 import android.view.MotionEvent

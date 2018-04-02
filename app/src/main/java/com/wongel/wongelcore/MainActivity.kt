@@ -9,13 +9,12 @@ import android.location.Location
 import android.opengl.GLSurfaceView
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
-import android.util.Half.EPSILON
 import android.util.Log
 import android.widget.CompoundButton
-import com.wongel.wongelcore.ar.listner.OnListner
-import com.wongel.wongelcore.ar.renderer.Renderer
-import com.wongel.wongelcore.ar.rendering.ObjectRenderer
-import com.wongel.wongelcore.ar.util.OrientationSensor
+import com.wongel.libwongelcore.ar.listner.OnListner
+import com.wongel.libwongelcore.ar.renderer.Renderer
+import com.wongel.libwongelcore.ar.rendering.ObjectRenderer
+import com.wongel.libwongelcore.ar.util.OrientationSensor
 import kotlinx.android.synthetic.main.activity_main.*
 import java.io.IOException
 

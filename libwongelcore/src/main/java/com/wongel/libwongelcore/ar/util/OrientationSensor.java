@@ -1,4 +1,4 @@
-package com.wongel.wongelcore.ar.util;
+package com.wongel.libwongelcore.ar.util;
 
 /**
  * Created by tseringwongelgurung on 3/28/18.

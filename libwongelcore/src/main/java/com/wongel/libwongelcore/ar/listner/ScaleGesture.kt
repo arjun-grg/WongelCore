@@ -1,4 +1,4 @@
-package com.wongel.wongelcore.ar.listner
+package com.wongel.libwongelcore.ar.listner
 
 import android.view.ScaleGestureDetector
 
